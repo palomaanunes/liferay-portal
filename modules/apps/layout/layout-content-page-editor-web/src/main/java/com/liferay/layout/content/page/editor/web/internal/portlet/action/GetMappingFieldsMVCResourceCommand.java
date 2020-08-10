@@ -55,10 +55,10 @@ public class GetMappingFieldsMVCResourceCommand extends BaseMVCResourceCommand {
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws Exception {
 
+		String fieldType = ParamUtil.getString(resourceRequest, "fieldType");
 		String classTypeId = ParamUtil.getString(
 			resourceRequest, "classTypeId");
 		long classNameId = ParamUtil.getLong(resourceRequest, "classNameId");
-		String fieldType = ParamUtil.getString(resourceRequest, "fieldType");
 
 		try {
 			JSONArray mappingFieldsJSONArray =

@@ -123,6 +123,8 @@ public class GetInfoItemMappingFieldsMVCResourceCommand
 		ThemeDisplay themeDisplay = (ThemeDisplay)resourceRequest.getAttribute(
 			WebKeys.THEME_DISPLAY);
 
+		String fieldType = ParamUtil.getString(resourceRequest, "fieldType");
+
 		JSONArray defaultFieldSetFieldsJSONArray =
 			JSONFactoryUtil.createJSONArray();
 
@@ -130,8 +132,6 @@ public class GetInfoItemMappingFieldsMVCResourceCommand
 			JSONUtil.put("fields", defaultFieldSetFieldsJSONArray));
 
 		InfoForm infoForm = infoItemFormProvider.getInfoForm(infoItemObject);
-
-		String fieldType = ParamUtil.getString(resourceRequest, "fieldType");
 
 		for (InfoFieldSetEntry infoFieldSetEntry :
 				infoForm.getInfoFieldSetEntries()) {

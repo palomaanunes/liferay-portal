@@ -17,9 +17,12 @@ package com.liferay.asset.list.asset.entry.query.processor;
 import com.liferay.asset.kernel.service.persistence.AssetEntryQuery;
 import com.liferay.portal.kernel.util.UnicodeProperties;
 
+import org.osgi.annotation.versioning.ProviderType;
+
 /**
  * @author Sarai Díaz
  */
+@ProviderType
 public interface AssetListAssetEntryQueryProcessor {
 
 	public void processAssetEntryQuery(

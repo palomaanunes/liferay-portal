@@ -137,21 +137,17 @@ definition {
 		AssertClick(
 			locator1 = "FormRules#RULE_BUILDER_CALCULATE_ADD_FIELD_BUTTON",
 			value1 = "Add Field");
-			
+
 		var key_calculateFieldOption = "${calculateFieldOption}";
-		
-		ScrollBy(value1 = "0, 230");
-		
+
 		Click(locator1 = "FormRules#RULE_BUILDER_CALCULATE_ADD_FIELD_LIST");
 	}
 
 	macro selectCalculateResultField {
 		Click(locator1 = "FormRules#RULE_BUILDER_CALCULATE_RESULT_FIELD");
-		
+
 		var key_calculateResultField = "${calculateResultField}";
-		
-		ScrollBy(value1 = "0, 230");
-		
+
 		AssertClick(
 			locator1 = "FormRules#RULE_BUILDER_CALCULATE_RESULT_FIELD_LIST",
 			value1 = "${calculateResultField}");
@@ -160,11 +156,9 @@ definition {
 	macro selectConditionField {
 		var key_conditionField = "${conditionField}";
 		var key_conditionRowNumber = "${conditionRowNumber}";
-		
-		ScrollBy(value1 = "0, 230");
-		
+
 		Click(locator1 = "FormRules#RULE_BUILDER_CONDITION_FIELD");
-		
+
 		AssertClick(
 			locator1 = "FormRules#RULE_BUILDER_SELECT_CONDITION_FIELD",
 			value1 = "${conditionField}");

@@ -2718,7 +2718,7 @@ definition {
 		Form.editFieldLabelMetal(fieldValue = "New Text");
 
 		Form.closeSidebar();
-		
+
 		FormsAdminNavigator.gotoEditField(fieldName = "Select");
 
 		Form.editFieldLabelMetal(fieldValue = "New Select");

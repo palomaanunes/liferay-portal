@@ -103,7 +103,9 @@
 	<td></td>
 	<td></td>
 </tr>
+
 <!--VIEW_HISTORY-->
+
 <tr>
 	<td>VIEW_HISTORY_VERSION_CHECKBOX</td>
 	<td>//tr[contains(.,'${key_webContentTitle}')]/td//input</td>
@@ -124,7 +126,9 @@
 	<td></td>
 	<td></td>
 </tr>
+
 <!--DISPLAY_PAGE-->
+
 <tr>
 	<td>DISPLAY_PAGE_SELECT</td>
 	<td>//select[contains(@id,'displayPageType')]</td>
@@ -155,7 +159,9 @@
 	<td></td>
 	<td></td>
 </tr>
+
 <!--IMAGE_FIELD-->
+
 <tr>
 	<td>IMAGE_FIELD_SELECT</td>
 	<td>//div[contains(@id, JournalPortlet_Image)]//div[contains(@class, 'button-holder')]//span[contains(text(), 'Select')]</td>

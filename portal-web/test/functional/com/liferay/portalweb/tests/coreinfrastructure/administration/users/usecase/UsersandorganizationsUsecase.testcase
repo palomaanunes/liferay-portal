@@ -719,7 +719,7 @@ definition {
 
 		Close.closeWindow(locator1 = "title=Welcome - ${siteName}");
 
-		SelectWindow(locator1 = "title=Users and Organizations - Control Panel - ${siteName}");
+		SelectWindow(locator1 = "title=Users and Organizations - ${siteName}");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
@@ -764,7 +764,7 @@ definition {
 
 		Close.closeWindow(locator1 = "title=Welcome - ${siteName}");
 
-		SelectWindow(locator1 = "title=Users and Organizations - Control Panel - ${siteName}");
+		SelectWindow(locator1 = "title=Users and Organizations - ${siteName}");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
@@ -777,7 +777,7 @@ definition {
 
 		Close.closeWindow(locator1 = "title=Welcome - ${siteName}");
 
-		SelectWindow(locator1 = "title=Users and Organizations - Control Panel - ${siteName}");
+		SelectWindow(locator1 = "title=Users and Organizations - ${siteName}");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
@@ -790,7 +790,7 @@ definition {
 
 		Close.closeWindow(locator1 = "title=Welcome - ${siteName}");
 
-		SelectWindow(locator1 = "title=Users and Organizations - Control Panel - ${siteName}");
+		SelectWindow(locator1 = "title=Users and Organizations - ${siteName}");
 	}
 
 	@ignore
@@ -856,9 +856,7 @@ definition {
 
 		UsersAndOrganizationsNavigator.gotoOrganizations();
 
-		Organization.addSiteCP(
-			organizationSite = "Community Site",
-			orgName = "Organization Name 2");
+		Organization.addSiteCP(orgName = "Organization Name 2");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
@@ -1304,8 +1302,9 @@ definition {
 				panel = "Control Panel",
 				portlet = "Sites");
 
-			// Site.addCommunityCP(siteName = "${siteName}"); Deprecated
-
+			Site.addCP(
+				siteName = "${siteName}",
+				siteType = "Blank");
 		}
 
 		ApplicationsMenu.gotoPortlet(
@@ -1385,9 +1384,7 @@ definition {
 
 		UsersAndOrganizationsNavigator.gotoOrganizations();
 
-		Organization.addSiteCP(
-			organizationSite = "Community Site",
-			orgName = "Organization Site Bravo");
+		Organization.addSiteCP(orgName = "Organization Site Bravo");
 
 		PortalSettings.editConfigurationUsersDefaultUserAssociationsSitesCP(siteName = "Site Name Alpha");
 
@@ -1767,9 +1764,7 @@ definition {
 
 		UsersAndOrganizationsNavigator.gotoOrganizations();
 
-		Organization.addSiteCP(
-			organizationSite = "Community Site",
-			orgName = "United States");
+		Organization.addSiteCP(orgName = "United States");
 
 		ApplicationsMenu.gotoPortlet(
 			category = "Users",
@@ -1778,9 +1773,7 @@ definition {
 
 		UsersAndOrganizationsNavigator.gotoOrganizations();
 
-		Organization.addSiteCP(
-			organizationSite = "Community Site",
-			orgName = "Canada");
+		Organization.addSiteCP(orgName = "Canada");
 
 		JSONOrganization.assignUserToOrganization(
 			organizationName = "Canada",

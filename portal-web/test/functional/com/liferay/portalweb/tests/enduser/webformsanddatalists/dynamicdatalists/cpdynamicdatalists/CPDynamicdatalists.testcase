@@ -224,7 +224,7 @@ definition {
 			fieldName = "firstName");
 
 		DDLRecord.populateFieldSelect(
-			ddlRecordFieldData = "Google Talk",
+			ddlRecordFieldData = "Google Hangouts",
 			fieldFieldLabel = "Instant Messenger Service",
 			fieldName = "imService");
 
@@ -3492,7 +3492,6 @@ definition {
 
 	@priority = "3"
 	test ViewCannotAddNonAlphanumericCharactersToFieldName {
-
 		var character1 = '''`''';
 
 		var character2 = '''~''';

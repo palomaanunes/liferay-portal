@@ -89,10 +89,12 @@ public class CommercePriceEntryDisplayContext
 			return StringPool.DASH;
 		}
 
-		CommerceMoney priceMoney = instanceBaseCommercePriceEntry.getPriceMoney(
-			commercePriceList.getCommerceCurrencyId());
+		CommerceMoney priceCommerceMoney =
+			instanceBaseCommercePriceEntry.getPriceMoney(
+				commercePriceList.getCommerceCurrencyId());
 
-		return priceMoney.format(commercePricingRequestHelper.getLocale());
+		return priceCommerceMoney.format(
+			commercePricingRequestHelper.getLocale());
 	}
 
 	public CommercePriceEntry getCommercePriceEntry() throws PortalException {
@@ -155,7 +157,7 @@ public class CommercePriceEntryDisplayContext
 			"redirect", commercePricingRequestHelper.getCurrentURL());
 		portletURL.setParameter(
 			"commercePriceListId", String.valueOf(getCommercePriceListId()));
-		portletURL.setParameter("commercePriceEntryId", "{id}");
+		portletURL.setParameter("commercePriceEntryId", "{priceEntryId}");
 
 		try {
 			portletURL.setWindowState(LiferayWindowState.POP_UP);

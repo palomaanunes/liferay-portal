@@ -48,7 +48,7 @@ import org.osgi.annotation.versioning.ProviderType;
  * credentials because this service can only be accessed from within the same
  * VM.
  *
- * @author Alessio Antonio Rendina
+ * @author Matija Petanjek
  * @see DispatchTriggerLocalServiceUtil
  * @generated
  */
@@ -80,8 +80,8 @@ public interface DispatchTriggerLocalService
 	public DispatchTrigger addDispatchTrigger(DispatchTrigger dispatchTrigger);
 
 	public DispatchTrigger addDispatchTrigger(
-			long userId, String name, boolean system, String type,
-			UnicodeProperties typeSettingsUnicodeProperties)
+			long userId, String name, boolean system,
+			UnicodeProperties taskSettingsUnicodeProperties, String taskType)
 		throws PortalException;
 
 	/**
@@ -280,6 +280,13 @@ public interface DispatchTriggerLocalService
 	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
 	public Date getPreviousFireDate(long dispatchTriggerId);
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DispatchTrigger> getUserDispatchTriggers(
+		long companyId, long userId, int start, int end);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int getUserDispatchTriggersCount(long companyId, long userId);
+
 	/**
 	 * Updates the dispatch trigger in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
@@ -297,14 +304,14 @@ public interface DispatchTriggerLocalService
 	public DispatchTrigger updateDispatchTrigger(
 			long dispatchTriggerId, boolean active, String cronExpression,
 			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-			int endDateMinute, boolean neverEnd, int startDateMonth,
-			int startDateDay, int startDateYear, int startDateHour,
-			int startDateMinute)
+			int endDateMinute, boolean neverEnd, boolean overlapAllowed,
+			int startDateMonth, int startDateDay, int startDateYear,
+			int startDateHour, int startDateMinute)
 		throws PortalException;
 
 	public DispatchTrigger updateDispatchTrigger(
 			long dispatchTriggerId, String name,
-			UnicodeProperties typeSettingsUnicodeProperties)
+			UnicodeProperties taskSettingsUnicodeProperties)
 		throws PortalException;
 
 }

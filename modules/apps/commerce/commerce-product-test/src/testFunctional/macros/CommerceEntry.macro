@@ -81,7 +81,6 @@ definition {
 			locator1 = "Button#ANY");
 
 		if (isSet(siteName)) {
-
 			Click(
 				key_menuTab = "Type",
 				locator1 = "CommerceEntry#MENU_TAB");
@@ -342,7 +341,7 @@ definition {
 	}
 
 	macro createNewAccountGroup {
-		ProductMenu.gotoPortlet(
+		ApplicationsMenu.gotoPortlet(
 			category = "Users",
 			panel = "Control Panel",
 			portlet = "Accounts");
@@ -354,7 +353,7 @@ definition {
 			entryName = "${accountsEntryName}",
 			user = "${user}");
 
-		ProductMenu.gotoPortlet(
+		ApplicationsMenu.gotoPortlet(
 			category = "Users",
 			panel = "Control Panel",
 			portlet = "Account Groups");
@@ -379,12 +378,9 @@ definition {
 	}
 
 	macro createNewCurrenciesEntry {
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
-			portlet = "Settings");
-
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Currencies");
+		CommerceNavigator.gotoPortlet(
+			category = "Store Management",
+			portlet = "Currencies");
 
 		Click(locator1 = "Button#PLUS");
 
@@ -723,7 +719,6 @@ definition {
 			locator1 = "ToggleSwitch#ANY_TOGGLE_SWITCH");
 
 		for (var optionList : list "${optionList}") {
-
 			IsElementPresent(
 				key_entryName = "${optionList}",
 				locator1 = "CommerceNavigation#ENTRY_NAME");
@@ -766,7 +761,6 @@ definition {
 				value1 = "${price}");
 
 			Click(locator1 = "Icon#CLOSE");
-
 		}
 	}
 

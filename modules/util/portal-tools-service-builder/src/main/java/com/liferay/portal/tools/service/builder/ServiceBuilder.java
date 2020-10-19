@@ -2132,15 +2132,36 @@ public class ServiceBuilder {
 		List<String> pkEntityColumnDBNames, IndexMetadata indexMetadata) {
 
 		if ((pkEntityColumnDBNames != null) &&
-			(pkEntityColumnDBNames.size() > 1)) {
+			!pkEntityColumnDBNames.isEmpty()) {
 
 			String[] columnNames = indexMetadata.getColumnNames();
 
 			if (columnNames.length <= pkEntityColumnDBNames.size()) {
+				if (pkEntityColumnDBNames.size() > 1) {
+					boolean redundant = true;
+
+					for (int i = 0; i < columnNames.length; i++) {
+						if (!columnNames[i].equals(
+								pkEntityColumnDBNames.get(i))) {
+
+							redundant = false;
+
+							break;
+						}
+					}
+
+					if (redundant) {
+						return;
+					}
+				}
+			}
+			else if (indexMetadata.isUnique()) {
 				boolean redundant = true;
 
-				for (int i = 0; i < columnNames.length; i++) {
-					if (!columnNames[i].equals(pkEntityColumnDBNames.get(i))) {
+				for (String pkEntityColumnDBName : pkEntityColumnDBNames) {
+					if (!ArrayUtil.contains(
+							columnNames, pkEntityColumnDBName)) {
+
 						redundant = false;
 
 						break;
@@ -7080,10 +7101,8 @@ public class ServiceBuilder {
 			}
 		}
 
-		Entity localizedEntity = _parseEntity(newLocalizedEntityElement);
-
 		entity.setLocalizedEntityColumns(localizedEntityColumns);
-		entity.setLocalizedEntity(localizedEntity);
+		entity.setLocalizedEntity(_parseEntity(newLocalizedEntityElement));
 	}
 
 	private void _parseVersionEntity(

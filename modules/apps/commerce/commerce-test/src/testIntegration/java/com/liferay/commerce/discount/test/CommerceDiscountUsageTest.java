@@ -49,6 +49,9 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
+import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -95,6 +98,11 @@ public class CommerceDiscountUsageTest {
 		_company = CompanyTestUtil.addCompany();
 
 		_user = UserTestUtil.addUser(_company);
+
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(_user));
+
+		PrincipalThreadLocal.setName(_user.getUserId());
 
 		_group = GroupTestUtil.addGroup(
 			_company.getCompanyId(), _user.getUserId(), 0);
@@ -188,9 +196,10 @@ public class CommerceDiscountUsageTest {
 			_commerceProductPriceCalculation.getCommerceProductPrice(
 				cpInstance.getCPInstanceId(), 1, commerceContext);
 
-		CommerceMoney finalPriceMoney = commerceProductPrice.getFinalPrice();
+		CommerceMoney finalPriceCommerceMoney =
+			commerceProductPrice.getFinalPrice();
 
-		BigDecimal finalPrice = finalPriceMoney.getPrice();
+		BigDecimal finalPrice = finalPriceCommerceMoney.getPrice();
 
 		Assert.assertEquals(
 			priceEntryPrice.stripTrailingZeros(),
@@ -217,9 +226,9 @@ public class CommerceDiscountUsageTest {
 			_commerceProductPriceCalculation.getCommerceProductPrice(
 				cpInstance.getCPInstanceId(), 1, commerceContext);
 
-		finalPriceMoney = commerceProductPrice.getFinalPrice();
+		finalPriceCommerceMoney = commerceProductPrice.getFinalPrice();
 
-		finalPrice = finalPriceMoney.getPrice();
+		finalPrice = finalPriceCommerceMoney.getPrice();
 
 		Assert.assertEquals(
 			priceEntryPrice.stripTrailingZeros(),
@@ -541,17 +550,18 @@ public class CommerceDiscountUsageTest {
 					cpInstance.getCPInstanceId(), 1, commerceContext);
 
 			if (commerceProductPrice != null) {
-				CommerceMoney finalPrice = commerceProductPrice.getFinalPrice();
+				CommerceMoney finalPriceCommerceMoney =
+					commerceProductPrice.getFinalPrice();
 
-				actualPrice = finalPrice.getPrice();
+				actualPrice = finalPriceCommerceMoney.getPrice();
 
 				CommerceDiscountValue discountValue =
 					commerceProductPrice.getDiscountValue();
 
-				CommerceMoney discountAmount =
+				CommerceMoney discountAmountCommerceMoney =
 					discountValue.getDiscountAmount();
 
-				discountPrice = discountAmount.getPrice();
+				discountPrice = discountAmountCommerceMoney.getPrice();
 			}
 
 			BigDecimal expectedPrice = commerceDiscount.getLevel1();
@@ -601,16 +611,18 @@ public class CommerceDiscountUsageTest {
 				cpInstance.getCPInstanceId(), 1, commerceContext);
 
 		if (commerceProductPrice != null) {
-			CommerceMoney finalPrice = commerceProductPrice.getFinalPrice();
+			CommerceMoney finalPriceCommerceMoney =
+				commerceProductPrice.getFinalPrice();
 
-			actualPrice = finalPrice.getPrice();
+			actualPrice = finalPriceCommerceMoney.getPrice();
 
 			CommerceDiscountValue discountValue =
 				commerceProductPrice.getDiscountValue();
 
-			CommerceMoney discountAmount = discountValue.getDiscountAmount();
+			CommerceMoney discountAmountCommerceMoney =
+				discountValue.getDiscountAmount();
 
-			discountPrice = discountAmount.getPrice();
+			discountPrice = discountAmountCommerceMoney.getPrice();
 		}
 
 		BigDecimal expectedPrice = commerceDiscount.getLevel1();

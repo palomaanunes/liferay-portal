@@ -38,10 +38,7 @@ export default ({
 	onDelete,
 	onDoubleClick,
 }) => {
-	const regex = new RegExp(
-		keywords.replace(new RegExp(/[^\w+ ]/g), ''),
-		'ig'
-	);
+	const regex = new RegExp(keywords, 'ig');
 	const fieldTypeList = fieldTypes
 		.filter(({system}) => !system)
 		.filter(({description, label}) => {
@@ -85,14 +82,13 @@ export default ({
 			);
 
 			return (
-				<div className="field-type-list">
+				<div className="field-type-list" key={index}>
 					<CollapsablePanel
+						Header={Header}
 						className={classNames({
 							'field-type-fieldgroup': !isFieldSet,
 							'field-type-fieldset': isFieldSet,
 						})}
-						Header={Header}
-						key={index}
 					>
 						<div className="field-type-item position-relative">
 							{nestedDataDefinitionFields.map(

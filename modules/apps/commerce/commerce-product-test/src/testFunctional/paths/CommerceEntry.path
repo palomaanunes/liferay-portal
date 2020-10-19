@@ -365,7 +365,7 @@
 </tr>
 <tr>
 	<td>BODY_VERTICAL_ELLIPSIS</td>
-	<td>//button[contains(@class,'dropdown-toggle')]//*[contains(@class,'lexicon-icon-ellipsis')]</td>
+	<td>//tr[contains(.,'${key_value}')]//*[name()='svg'][contains(@class,'icon-ellipsis')]</td>
 	<td></td>
 </tr>
 <tr>
@@ -428,6 +428,11 @@
 <tr>
 	<td>ADD_RELATION_FIELD_SELECT</td>
 	<td>//div[h4[contains(.,'${key_title}')]]//input[@type='text']/../../../..//button[contains(.,'Select')]</td>
+	<td></td>
+</tr>
+<tr>
+	<td>TABLE_LIST_TITLE</td>
+	<td>//div[contains(@class,'table-list-title')]/a[contains(.,'${key_entryName}')]</td>
 	<td></td>
 </tr>
 <!--IFRAME-->

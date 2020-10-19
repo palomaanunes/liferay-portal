@@ -20,10 +20,13 @@ import com.liferay.dispatch.service.base.DispatchTriggerServiceBaseImpl;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
+import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.service.permission.PortalPermissionUtil;
 import com.liferay.portal.kernel.util.UnicodeProperties;
+
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -41,15 +44,15 @@ public class DispatchTriggerServiceImpl extends DispatchTriggerServiceBaseImpl {
 
 	@Override
 	public DispatchTrigger addDispatchTrigger(
-			long userId, String name, String type,
-			UnicodeProperties typeSettingsUnicodeProperties)
+			long userId, String name,
+			UnicodeProperties taskSettingsUnicodeProperties, String taskType)
 		throws PortalException {
 
 		PortalPermissionUtil.check(
 			getPermissionChecker(), DispatchActionKeys.ADD_DISPATCH_TRIGGER);
 
 		return dispatchTriggerLocalService.addDispatchTrigger(
-			userId, name, false, type, typeSettingsUnicodeProperties);
+			userId, name, false, taskSettingsUnicodeProperties, taskType);
 	}
 
 	@Override
@@ -63,12 +66,41 @@ public class DispatchTriggerServiceImpl extends DispatchTriggerServiceBaseImpl {
 	}
 
 	@Override
+	public List<DispatchTrigger> getDispatchTriggers(int start, int end)
+		throws PortalException {
+
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (permissionChecker.isCompanyAdmin()) {
+			return dispatchTriggerLocalService.getDispatchTriggers(
+				permissionChecker.getCompanyId(), start, end);
+		}
+
+		return dispatchTriggerLocalService.getUserDispatchTriggers(
+			permissionChecker.getCompanyId(), permissionChecker.getUserId(),
+			start, end);
+	}
+
+	@Override
+	public int getDispatchTriggersCount() throws PortalException {
+		PermissionChecker permissionChecker = getPermissionChecker();
+
+		if (permissionChecker.isCompanyAdmin()) {
+			return dispatchTriggerLocalService.getDispatchTriggersCount(
+				permissionChecker.getCompanyId());
+		}
+
+		return dispatchTriggerLocalService.getUserDispatchTriggersCount(
+			permissionChecker.getCompanyId(), permissionChecker.getUserId());
+	}
+
+	@Override
 	public DispatchTrigger updateDispatchTrigger(
 			long dispatchTriggerId, boolean active, String cronExpression,
 			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-			int endDateMinute, boolean neverEnd, int startDateMonth,
-			int startDateDay, int startDateYear, int startDateHour,
-			int startDateMinute)
+			int endDateMinute, boolean neverEnd, boolean overlapAllowed,
+			int startDateMonth, int startDateDay, int startDateYear,
+			int startDateHour, int startDateMinute)
 		throws PortalException {
 
 		_dispatchTriggerModelResourcePermission.check(
@@ -76,21 +108,22 @@ public class DispatchTriggerServiceImpl extends DispatchTriggerServiceBaseImpl {
 
 		return dispatchTriggerLocalService.updateDispatchTrigger(
 			dispatchTriggerId, active, cronExpression, endDateMonth, endDateDay,
-			endDateYear, endDateHour, endDateMinute, neverEnd, startDateMonth,
-			startDateDay, startDateYear, startDateHour, startDateMinute);
+			endDateYear, endDateHour, endDateMinute, neverEnd, overlapAllowed,
+			startDateMonth, startDateDay, startDateYear, startDateHour,
+			startDateMinute);
 	}
 
 	@Override
 	public DispatchTrigger updateDispatchTrigger(
 			long dispatchTriggerId, String name,
-			UnicodeProperties typeSettingsUnicodeProperties)
+			UnicodeProperties taskSettingsUnicodeProperties)
 		throws PortalException {
 
 		_dispatchTriggerModelResourcePermission.check(
 			getPermissionChecker(), dispatchTriggerId, ActionKeys.UPDATE);
 
 		return dispatchTriggerLocalService.updateDispatchTrigger(
-			dispatchTriggerId, name, typeSettingsUnicodeProperties);
+			dispatchTriggerId, name, taskSettingsUnicodeProperties);
 	}
 
 	private static volatile ModelResourcePermission<DispatchTrigger>

@@ -25,7 +25,6 @@ definition {
 	}
 
 	tearDown {
-
 		User.logoutAndLoginPG(
 			userLoginEmailAddress = "test@liferay.com",
 			userLoginFullName = "Test Test");
@@ -38,7 +37,6 @@ definition {
 			PortalInstances.tearDownCP();
 		}
 		else {
-
 			Page.tearDownCP();
 
 			JSONGroup.deleteGroupByName(groupName = "App Builder Site Name");
@@ -63,7 +61,6 @@ definition {
 					resourceName = "com.liferay.app.builder",
 					roleTitle = "${roleTitle}");
 			}
-
 		}
 	}
 
@@ -134,7 +131,6 @@ definition {
 		var fieldList = "Text,Select from List,Single Selection,Multiple Selection,Date,Numeric,Upload";
 
 		for (var field : list "${fieldList}") {
-
 			AppBuilderAdmin.add();
 
 			FormViewBuilder.addFormViewAndValidateFieldLabel(
@@ -1098,6 +1094,8 @@ definition {
 	test MakeSureIsNotPossibleSaveEmptyFormView {
 		property portal.upstream = "quarantine";
 
+		var myFormViewName = "My Form View Title";
+
 		AppBuilderAdmin.addCustomObject(
 			customObjectName = "my custom object",
 			isCreatingFormView = "true",
@@ -1113,25 +1111,25 @@ definition {
 			fieldLabel = "Text",
 			fieldName = "Text");
 
-		Button.clickSave();
+		AppBuilderAdmin.viewInactiveSaveButton();
 
-		Alert.viewErrorMessage(errorMessage = "Layout is empty.");
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Text");
 
-		FormViewBuilder.addFieldToObject(fieldName = "Text");
+		FormViewBuilder.save();
 
-		Button.clickSave();
+		FormViewBuilder.openFormView(formViewName = "My Form View Title");
 
-		Alert.viewErrorMessage(errorMessage = "Layout is empty.");
-
-		FormViewBuilder.addFieldByDoubleClickFromObjectSidebar(fieldLabel = "Text");
-
-		FormViewBuilder.fieldEllipsisAction(
+		FormViewBuilder.deleteObjectSidebarField(
 			fieldLabel = "Text",
-			selectAction = "Remove");
+			fieldName = "Text");
 
-		Button.clickSave();
+		AppBuilderAdmin.viewInactiveSaveButton();
 
-		Alert.viewErrorMessage(errorMessage = "Layout is empty.");
+		FormViewBuilder.addFieldByDoubleClick(fieldType = "Text");
+
+		FormViewBuilder.save();
+
+		AppBuilderAdmin.validateItemNameOnTable(itemName = "${myFormViewName}");
 	}
 
 	@description = "Place a widget in my page with only a Form View of my App"
@@ -1885,7 +1883,6 @@ definition {
 		FormViewBuilder.setName(formViewName = "Form View Title 1");
 
 		for (var fieldType : list "Text,Select from List,Single Selection,Multiple Selection,Date,Numeric,Upload") {
-
 			FormViewBuilder.addFieldByDoubleClick(fieldType = "${fieldType}");
 
 			FormViewBuilder.closeSidebar();
@@ -1906,7 +1903,6 @@ definition {
 		TableViewBuilder.validateColumnLabelAtSidebar(columnLabel = "Date");
 
 		for (var columnLabel : list "Text,Select from List,Single Selection,Multiple Selection,Numeric,Upload") {
-
 			TableViewBuilder.validateNoColumnLabelAtSidebar(columnLabel = "${columnLabel}");
 		}
 
@@ -1917,7 +1913,6 @@ definition {
 		TableViewBuilder.validateColumnLabelAtSidebar(columnLabel = "My Text 23");
 
 		for (var columnLabel : list "Select from List,Single Selection,Multiple Selection,Date,Numeric,Upload") {
-
 			TableViewBuilder.validateNoColumnLabelAtSidebar(columnLabel = "${columnLabel}");
 		}
 
@@ -1932,7 +1927,6 @@ definition {
 		TableViewBuilder.validateColumnLabelAtSidebar(columnLabel = "Multiple Selection");
 
 		for (var columnLabel : list "Text,Date,Numeric,Upload") {
-
 			TableViewBuilder.validateNoColumnLabelAtSidebar(columnLabel = "${columnLabel}");
 		}
 
@@ -1941,14 +1935,12 @@ definition {
 		TableViewBuilder.searchByItem(itemName = "Oranges");
 
 		for (var columnLabel : list "Text,Select from List,Single Selection,Multiple Selection,Date,Numeric,Upload") {
-
 			TableViewBuilder.validateNoColumnLabelAtSidebar(columnLabel = "${columnLabel}");
 		}
 
 		TableViewBuilder.clearSearch();
 
 		for (var columnLabel : list "My Text 23,Select from List,Single Selection,Multiple Selection,Date,Numeric,Upload") {
-
 			TableViewBuilder.validateColumnLabelAtSidebar(columnLabel = "${columnLabel}");
 		}
 	}
@@ -2338,9 +2330,7 @@ definition {
 			siteName = "App Builder Site Name");
 
 		for (var number : list "1,2") {
-
 			if ("${number}" == "2") {
-
 				User.logoutAndLoginPG(
 					userLoginEmailAddress = "test@liferay.com",
 					userLoginFullName = "Test Test");

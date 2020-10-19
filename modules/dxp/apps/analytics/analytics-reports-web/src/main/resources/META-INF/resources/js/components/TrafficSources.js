@@ -11,7 +11,7 @@
 
 import ClayButton from '@clayui/button';
 import className from 'classnames';
-import {useIsMounted} from 'frontend-js-react-web';
+import {useStateSafe} from 'frontend-js-react-web';
 import PropTypes from 'prop-types';
 import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {Cell, Pie, PieChart, Tooltip} from 'recharts';
@@ -55,26 +55,18 @@ export default function TrafficSources({
 
 	const [{publishedToday}] = useContext(StoreContext);
 
-	const [trafficSources, setTrafficSources] = useState([]);
-
-	const isMounted = useIsMounted();
+	const [trafficSources, setTrafficSources] = useStateSafe([]);
 
 	useEffect(() => {
 		if (validAnalyticsConnection) {
 			dataProvider()
-				.then((trafficSources) => {
-					if (isMounted()) {
-						setTrafficSources(trafficSources);
-					}
-				})
+				.then(setTrafficSources)
 				.catch(() => {
 					setTrafficSources([]);
-					if (isMounted()) {
-						addWarning();
-					}
+					addWarning();
 				});
 		}
-	}, [addWarning, dataProvider, isMounted, validAnalyticsConnection]);
+	}, [addWarning, dataProvider, setTrafficSources, validAnalyticsConnection]);
 
 	const fullPieChart = useMemo(
 		() => trafficSources.some(({value}) => value),
@@ -215,6 +207,7 @@ export default function TrafficSources({
 								data={trafficSources}
 								dataKey="value"
 								innerRadius={PIE_CHART_SIZES.innerRadius}
+								isAnimationActive={false}
 								nameKey={'name'}
 								outerRadius={PIE_CHART_SIZES.radius}
 								paddingAngle={PIE_CHART_SIZES.paddingAngle}

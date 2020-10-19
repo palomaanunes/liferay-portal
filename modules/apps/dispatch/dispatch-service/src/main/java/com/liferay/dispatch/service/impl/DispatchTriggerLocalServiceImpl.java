@@ -17,6 +17,7 @@ package com.liferay.dispatch.service.impl;
 import com.liferay.dispatch.constants.DispatchConstants;
 import com.liferay.dispatch.exception.DispatchTriggerEndDateException;
 import com.liferay.dispatch.exception.DispatchTriggerNameException;
+import com.liferay.dispatch.exception.DispatchTriggerSchedulerException;
 import com.liferay.dispatch.exception.DispatchTriggerStartDateException;
 import com.liferay.dispatch.exception.DuplicateDispatchTriggerException;
 import com.liferay.dispatch.model.DispatchTrigger;
@@ -58,8 +59,8 @@ public class DispatchTriggerLocalServiceImpl
 
 	@Override
 	public DispatchTrigger addDispatchTrigger(
-			long userId, String name, boolean system, String type,
-			UnicodeProperties typeSettingsUnicodeProperties)
+			long userId, String name, boolean system,
+			UnicodeProperties taskSettingsUnicodeProperties, String taskType)
 		throws PortalException {
 
 		User user = userLocalService.getUser(userId);
@@ -74,9 +75,9 @@ public class DispatchTriggerLocalServiceImpl
 		dispatchTrigger.setUserName(user.getFullName());
 		dispatchTrigger.setName(name);
 		dispatchTrigger.setSystem(system);
-		dispatchTrigger.setType(type);
-		dispatchTrigger.setTypeSettingsProperties(
-			typeSettingsUnicodeProperties);
+		dispatchTrigger.setTaskSettingsUnicodeProperties(
+			taskSettingsUnicodeProperties);
+		dispatchTrigger.setTaskType(taskType);
 
 		dispatchTrigger = dispatchTriggerPersistence.update(dispatchTrigger);
 
@@ -115,7 +116,8 @@ public class DispatchTriggerLocalServiceImpl
 	public DispatchTrigger deleteDispatchTrigger(long dispatchTriggerId)
 		throws PortalException {
 
-		return dispatchTriggerPersistence.remove(dispatchTriggerId);
+		return deleteDispatchTrigger(
+			dispatchTriggerPersistence.findByPrimaryKey(dispatchTriggerId));
 	}
 
 	@Override
@@ -172,12 +174,25 @@ public class DispatchTriggerLocalServiceImpl
 	}
 
 	@Override
+	public List<DispatchTrigger> getUserDispatchTriggers(
+		long companyId, long userId, int start, int end) {
+
+		return dispatchTriggerPersistence.findByC_U(
+			companyId, userId, start, end);
+	}
+
+	@Override
+	public int getUserDispatchTriggersCount(long companyId, long userId) {
+		return dispatchTriggerPersistence.countByC_U(companyId, userId);
+	}
+
+	@Override
 	public DispatchTrigger updateDispatchTrigger(
 			long dispatchTriggerId, boolean active, String cronExpression,
 			int endDateMonth, int endDateDay, int endDateYear, int endDateHour,
-			int endDateMinute, boolean neverEnd, int startDateMonth,
-			int startDateDay, int startDateYear, int startDateHour,
-			int startDateMinute)
+			int endDateMinute, boolean neverEnd, boolean overlapAllowed,
+			int startDateMonth, int startDateDay, int startDateYear,
+			int startDateHour, int startDateMinute)
 		throws PortalException {
 
 		DispatchTrigger dispatchTrigger =
@@ -186,12 +201,17 @@ public class DispatchTriggerLocalServiceImpl
 		dispatchTrigger.setActive(active);
 		dispatchTrigger.setCronExpression(cronExpression);
 
-		if (!neverEnd) {
+		if (neverEnd) {
+			dispatchTrigger.setEndDate(null);
+		}
+		else {
 			dispatchTrigger.setEndDate(
 				_portal.getDate(
 					endDateMonth, endDateDay, endDateYear, endDateHour,
 					endDateMinute, DispatchTriggerEndDateException.class));
 		}
+
+		dispatchTrigger.setOverlapAllowed(overlapAllowed);
 
 		dispatchTrigger.setStartDate(
 			_portal.getDate(
@@ -214,7 +234,7 @@ public class DispatchTriggerLocalServiceImpl
 	@Override
 	public DispatchTrigger updateDispatchTrigger(
 			long dispatchTriggerId, String name,
-			UnicodeProperties typeSettingsUnicodeProperties)
+			UnicodeProperties taskSettingsUnicodeProperties)
 		throws PortalException {
 
 		DispatchTrigger dispatchTrigger =
@@ -223,8 +243,8 @@ public class DispatchTriggerLocalServiceImpl
 		validate(dispatchTriggerId, dispatchTrigger.getCompanyId(), name);
 
 		dispatchTrigger.setName(name);
-		dispatchTrigger.setTypeSettingsProperties(
-			typeSettingsUnicodeProperties);
+		dispatchTrigger.setTaskSettingsUnicodeProperties(
+			taskSettingsUnicodeProperties);
 
 		return dispatchTriggerPersistence.update(dispatchTrigger);
 	}
@@ -257,8 +277,9 @@ public class DispatchTriggerLocalServiceImpl
 	}
 
 	private void _addSchedulerJob(
-		long dispatchTriggerId, String cronExpression, Date startDate,
-		Date endDate) {
+			long dispatchTriggerId, String cronExpression, Date startDate,
+			Date endDate)
+		throws PortalException {
 
 		Trigger trigger = _triggerFactory.createTrigger(
 			_getJobName(dispatchTriggerId), _getGroupName(dispatchTriggerId),
@@ -277,7 +298,7 @@ public class DispatchTriggerLocalServiceImpl
 			}
 		}
 		catch (SchedulerException schedulerException) {
-			_log.error(
+			throw new DispatchTriggerSchedulerException(
 				"Unable to create scheduler entry for dispatch trigger " +
 					dispatchTriggerId,
 				schedulerException);

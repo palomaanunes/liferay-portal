@@ -108,6 +108,8 @@ import com.liferay.portal.kernel.portlet.PortletIdCodec;
 import com.liferay.portal.kernel.portlet.PortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoader;
+import com.liferay.portal.kernel.resource.bundle.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.service.LayoutSetLocalServiceUtil;
@@ -131,8 +133,6 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PortletKeys;
-import com.liferay.portal.kernel.util.ResourceBundleLoader;
-import com.liferay.portal.kernel.util.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -236,6 +236,9 @@ public class ContentPageEditorDisplayContext {
 		return HashMapBuilder.<String, Object>put(
 			"config",
 			HashMapBuilder.<String, Object>put(
+				"adaptiveMediaEnabled",
+				_ffLayoutContentPageEditorConfiguration.adaptiveMediaEnabled()
+			).put(
 				"addFragmentCompositionURL",
 				getFragmentEntryActionURL(
 					"/content_layout/add_fragment_composition")
@@ -362,6 +365,10 @@ public class ContentPageEditorDisplayContext {
 						frontendTokenDefinition, themeDisplay.getLocale(),
 						_getDefaultStyleBookEntry());
 				}
+			).put(
+				"getAvailableImageConfigurationsURL",
+				getResourceURL(
+					"/content_layout/get_available_image_configurations")
 			).put(
 				"getAvailableListItemRenderersURL",
 				getResourceURL(
@@ -1434,7 +1441,7 @@ public class ContentPageEditorDisplayContext {
 					).put(
 						"editableTypes",
 						EditableFragmentEntryProcessorUtil.getEditableTypes(
-							fragmentEntryLink.getHtml())
+							content)
 					).put(
 						"editableValues",
 						JSONFactoryUtil.createJSONObject(

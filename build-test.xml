@@ -910,7 +910,7 @@ jdbc.counter.connectionProperties=oracle.jdbc.ReadTimeout=0;oracle.net.CONNECT_T
 				override="true"
 				property="poshi.java.jdk.opts"
 				regexp="(-Xmx)(\d*\w*)"
-				replace="\12048m"
+				replace="\14096m"
 			/>
 
 			<propertyregex
@@ -1445,6 +1445,7 @@ war.path=${app.server.portal.dir}/</echo>
 						</then>
 					</if>
 
+					<gradle-execute dir="${test.poshi.core.src.dir}" task="deploy" />
 					<gradle-execute dir="${test.poshi.runner.src.dir}" task="deploy" />
 				</then>
 			</if>
@@ -5482,7 +5483,11 @@ war.path=${app.server.portal.dir}/</echo>
 			<if>
 				<and>
 					<equals arg1="${build.profile}" arg2="dxp" />
-					<equals arg1="${env.CI_TEST_SUITE}" arg2="portal-release" />
+					<or>
+						<equals arg1="${env.CI_TEST_SUITE}" arg2="portal-fixpack-release" />
+						<equals arg1="${env.CI_TEST_SUITE}" arg2="portal-hotfix-release" />
+						<equals arg1="${env.CI_TEST_SUITE}" arg2="portal-release" />
+					</or>
 				</and>
 				<then>
 					<get-commerce-license-product-name />
@@ -5594,6 +5599,92 @@ war.path=${app.server.portal.dir}/</echo>
 							<fail message="${wait.for.app.server.log.timed.out.message}${line.separator}${jstack.output}" />
 						</then>
 					</if>
+				</then>
+			</if>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="wait-for-app-server-log-message">
+		<attribute name="log.message" />
+
+		<sequential>
+			<local name="timed.out.message" />
+
+			<beanshell>
+				<![CDATA[
+					import java.io.File;
+
+					import org.apache.commons.io.FileUtils;
+
+					import org.apache.tools.ant.DirectoryScanner;
+
+					public boolean isContainedInCatalinaLogFiles(String searchString) {
+						DirectoryScanner directoryScanner = new DirectoryScanner();
+
+						File liferayHomeDir = new File(project.getProperty("liferay.home"));
+
+						String canonicalLogFileLocation = liferayHomeDir.getCanonicalPath();
+
+						directoryScanner.setIncludes(new String[] {canonicalLogFileLocation + "/logs/liferay.*.log"});
+
+						directoryScanner.scan();
+
+						String osName = project.getProperty("os.name");
+
+						osName = osName.toLowerCase();
+
+						for (String filePath : directoryScanner.getIncludedFiles()) {
+							if (osName.contains("win")) {
+								filePath = filePath.replace("/", "\\");
+							}
+
+							File file = new File(filePath);
+
+							String fileContent = FileUtils.readFileToString(file);
+
+							if (fileContent.contains(searchString)) {
+								return true;
+							}
+						}
+
+						return false;
+					}
+
+					System.out.println("Waiting for '@{log.message}' to appear in log message");
+
+					int timeoutDuration = Integer.parseInt(project.getProperty("timeout.app.server.wait"));
+
+					long timeoutTime = System.currentTimeMillis() + (1000 * timeoutDuration);
+
+					while (true) {
+						try {
+							if (isContainedInCatalinaLogFiles("@{log.message}")) {
+								break;
+							}
+						}
+						catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						long currentTime = System.currentTimeMillis();
+
+						if (currentTime > timeoutTime) {
+							project.setProperty("timed.out.message", "Unable to find log message after " + (timeoutDuration / 60) + " minutes.");
+
+							break;
+						}
+
+						Thread.sleep(1000);
+					}
+				]]>
+			</beanshell>
+
+			<if>
+				<isset property="timed.out.message" />
+				<then>
+					<get-jstack-output process.name="Bootstrap" />
+
+					<fail message="${timed.out.message}${line.separator}${jstack.output}" />
 				</then>
 			</if>
 		</sequential>
@@ -10747,16 +10838,44 @@ ANT_OPTS=${env.ANT_OPTS}</echo>
 					src="${test.build.portal.tools.zip.url}"
 				/>
 
+				<local name="liferay.portal.tools.temp.dir" />
+
+				<property name="liferay.portal.tools.temp.dir" value="liferay-portal-tools-temp" />
+
 				<unzip
-					dest="${liferay.home}/tools"
+					dest="${liferay.portal.tools.temp.dir}"
 					src="liferay-portal-tools.zip"
 				>
 					<mapper
-						from="[^/]+/(tools/)?(.*)"
-						to="\2"
+						from="[^/]+/(.*)"
+						to="\1"
 						type="regexp"
 					/>
 				</unzip>
+
+				<if>
+					<available file="${liferay.portal.tools.temp.dir}/portal-tools-db-upgrade-client" />
+					<then>
+						<move
+							todir="${liferay.home}/tools"
+						>
+							<fileset
+								dir="${liferay.portal.tools.temp.dir}"
+							/>
+						</move>
+					</then>
+					<else>
+						<move
+							todir="${liferay.home}/tools/portal-tools-db-upgrade-client"
+						>
+							<fileset
+								dir="${liferay.portal.tools.temp.dir}"
+							/>
+						</move>
+					</else>
+				</if>
+
+				<delete dir="${liferay.portal.tools.temp.dir}" failonerror="false" />
 
 				<move
 					todir="${liferay.home}/tools"
@@ -11653,7 +11772,7 @@ cluster.link.bind.addr["cluster-link-udp"]=127.0.0.1</echo>
 								<![CDATA[
 									#!/bin/bash
 
-									/opt/mssql-tools/bin/sqlcmd -S localhost -U ${database.sqlserver.username} -P ${database.sqlserver.password} -Q "RESTORE DATABASE ${database.sqlserver.schema} FROM  DISK='/tmp/${database.type}.bak'"
+									/opt/mssql-tools/bin/sqlcmd -P ${database.sqlserver.password} -Q "RESTORE DATABASE ${database.sqlserver.schema} FROM DISK='/tmp/${database.type}.bak'" -S localhost -U ${database.sqlserver.username}
 								]]>
 							</echo>
 

@@ -259,20 +259,20 @@ public abstract class BaseCommerceProductPriceCalculation
 						commerceOptionValue.getCPInstanceId(),
 						optionValueQuantity, true, commerceContext);
 
-				CommerceMoney optionValueUnitPriceMoney =
+				CommerceMoney optionValueUnitPriceCommerceMoney =
 					optionValueProductPrice.getUnitPrice();
 
 				BigDecimal optionValueUnitPrice =
-					optionValueUnitPriceMoney.getPrice();
+					optionValueUnitPriceCommerceMoney.getPrice();
 
-				CommerceMoney optionValueUnitPromoPriceMoney =
+				CommerceMoney optionValueUnitPromoPriceCommerceMoney =
 					optionValueProductPrice.getUnitPromoPrice();
 
 				BigDecimal optionValueUnitPromoPrice = BigDecimal.ZERO;
 
-				if (!optionValueUnitPromoPriceMoney.isEmpty()) {
+				if (!optionValueUnitPromoPriceCommerceMoney.isEmpty()) {
 					optionValueUnitPromoPrice =
-						optionValueUnitPromoPriceMoney.getPrice();
+						optionValueUnitPromoPriceCommerceMoney.getPrice();
 				}
 
 				if (CommerceBigDecimalUtil.gt(
@@ -297,11 +297,11 @@ public abstract class BaseCommerceProductPriceCalculation
 					optionValueUnitPromoPrice.multiply(
 						BigDecimal.valueOf(optionValueQuantity)));
 
-				CommerceMoney optionValueFinalPriceMoney =
+				CommerceMoney optionValueFinalPriceCommerceMoney =
 					optionValueProductPrice.getFinalPrice();
 
 				finalPrice = finalPrice.add(
-					optionValueFinalPriceMoney.getPrice());
+					optionValueFinalPriceCommerceMoney.getPrice());
 			}
 		}
 
@@ -316,22 +316,24 @@ public abstract class BaseCommerceProductPriceCalculation
 			boolean discountsTargetNetPrice)
 		throws PortalException {
 
-		CommerceMoney unitPriceMoney = commerceProductPriceImpl.getUnitPrice();
+		CommerceMoney unitPriceCommerceMoney =
+			commerceProductPriceImpl.getUnitPrice();
 
 		BigDecimal unitPriceWithTaxAmount = getConvertedPrice(
-			cpInstanceId, unitPriceMoney.getPrice(), false, commerceContext);
+			cpInstanceId, unitPriceCommerceMoney.getPrice(), false,
+			commerceContext);
 
 		BigDecimal activePrice = unitPriceWithTaxAmount;
 
-		CommerceMoney promoPriceMoney =
+		CommerceMoney promoPriceCommerceMoney =
 			commerceProductPriceImpl.getUnitPromoPrice();
 
-		if (!promoPriceMoney.isEmpty() &&
+		if (!promoPriceCommerceMoney.isEmpty() &&
 			CommerceBigDecimalUtil.gt(
-				promoPriceMoney.getPrice(), BigDecimal.ZERO)) {
+				promoPriceCommerceMoney.getPrice(), BigDecimal.ZERO)) {
 
 			BigDecimal unitPromoPriceWithTaxAmount = getConvertedPrice(
-				cpInstanceId, promoPriceMoney.getPrice(), false,
+				cpInstanceId, promoPriceCommerceMoney.getPrice(), false,
 				commerceContext);
 
 			commerceProductPriceImpl.setUnitPromoPriceWithTaxAmount(
@@ -354,6 +356,10 @@ public abstract class BaseCommerceProductPriceCalculation
 			commerceContext.getCommerceCurrency();
 
 		int quantity = commerceProductPriceImpl.getQuantity();
+
+		if (activePrice == null) {
+			activePrice = BigDecimal.ZERO;
+		}
 
 		activePrice = activePrice.multiply(BigDecimal.valueOf(quantity));
 
@@ -585,9 +591,7 @@ public abstract class BaseCommerceProductPriceCalculation
 		CommerceMoney unitPriceCommerceMoney,
 		CommerceMoney promoPriceCommerceMoney, BigDecimal finalPrice) {
 
-		BigDecimal[] prices = {
-			BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO
-		};
+		BigDecimal[] prices = new BigDecimal[3];
 
 		if (!unitPriceCommerceMoney.isEmpty()) {
 			prices[0] = unitPriceCommerceMoney.getPrice();

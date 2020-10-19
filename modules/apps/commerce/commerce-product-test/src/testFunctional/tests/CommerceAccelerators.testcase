@@ -32,7 +32,7 @@ definition {
 		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "CommerceAccelerators#DeactivateCommerceAccount";
 
-		CommerceAccelerators.initializeAccelerator(siteName = "Minium");
+		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
 		Navigator.openWithAppendToBaseURL(urlAppend = "web/minium");
 
@@ -110,11 +110,10 @@ definition {
 		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "CommerceAccelerators#InitializeNewMiniumSite";
 
-		CommerceAccelerators.initializeAccelerator(siteName = "Minium");
+		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Store Management",
 			portlet = "Channels");
 
 		CommerceNavigator.gotoEntry(entryName = "Minium Portal");
@@ -126,9 +125,8 @@ definition {
 			channelType = "Site",
 			commerceSiteType = "B2B");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
 			portlet = "Catalogs");
 
 		CommerceNavigator.gotoEntry(entryName = "Minium");
@@ -138,9 +136,8 @@ definition {
 			catalogLanguage = "English (United States)",
 			catalogName = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
 			portlet = "Products");
 
 		CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50 entries.");
@@ -163,11 +160,10 @@ definition {
 		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "CommerceAccelerators#InitializeNewSpeedwellSite";
 
-		CommerceAccelerators.initializeAccelerator(siteName = "Speedwell");
+		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Store Management",
 			portlet = "Channels");
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
@@ -179,9 +175,8 @@ definition {
 			channelType = "Site",
 			commerceSiteType = "B2C");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
 			portlet = "Catalogs");
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell");
@@ -191,9 +186,8 @@ definition {
 			catalogLanguage = "English (United States)",
 			catalogName = "Speedwell");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Product Management",
 			portlet = "Products");
 
 		CommerceEntry.viewPaginationResults(results = "Showing 1 to 10 of 50 entries.");
@@ -215,14 +209,13 @@ definition {
 		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "CommerceAccelerators#MiniumSiteFullFlow";
 
-		CommerceAccelerators.initializeAccelerator(siteName = "Minium");
+		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Minium");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Store Management",
 			portlet = "Channels");
 
-		CommerceNavigator.gotoEntry(entryName = "Minium Portal");
+		CommerceNavigator.gotoTableListEntry(entryName = "Minium Portal");
 
 		CommerceChannels.activatePaymentMethod(paymentMethod = "Money Order");
 
@@ -325,56 +318,45 @@ definition {
 			productSKU = "MIN93015",
 			productUnitPrice = "50.00");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Order Management",
 			portlet = "Orders");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Open");
-
-		ClickNoError(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
-
-		CommerceEntry.clickNoError(menuItem = "Edit");
+		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Open");
 
 		CommerceOrders.viewOrdersEntry(
+			productListPrice = "50.00",
 			productName = "ABS Sensor",
-			productPrice = "100.00",
 			productQuantity = "2",
 			productSKU = "MIN93015",
-			productUnitPrice = "50.00");
+			productTotalPrice = "100.00");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Order Management",
 			portlet = "Orders");
 
-		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Pending");
-
-		ClickNoError(locator1 = "CommerceEntry#BODY_VERTICAL_ELLIPSIS");
-
-		CommerceEntry.clickNoError(menuItem = "Edit");
+		CommerceNavigator.gotoOrderEntryViaAdmin(status = "Pending");
 
 		CommerceOrders.viewOrdersEntry(
 			addressAddress = "Test Address",
 			addressCity = "Test City",
 			addressZipCode = "Test Zip Code",
 			paymentMethod = "Money Order",
+			productListPrice = "50.00",
 			productName = "ABS Sensor",
-			productPrice = "100.00",
 			productQuantity = "2",
 			productSKU = "MIN93015",
-			productUnitPrice = "50.00");
+			productTotalPrice = "100.00");
 	}
 
 	test SpeedwellSiteFullFlow {
 		property portal.acceptance = "quarantine";
 		property test.name.skip.portal.instance = "CommerceAccelerators#SpeedwellSiteFullFlow";
 
-		CommerceAccelerators.initializeAccelerator(siteName = "Speedwell");
+		CommerceAccelerators.initializeNewSiteViaAccelerator(siteName = "Speedwell");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Store Management",
 			portlet = "Channels");
 
 		CommerceNavigator.gotoEntry(entryName = "Speedwell Portal");
@@ -474,9 +456,8 @@ definition {
 
 		Refresh();
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Order Management",
 			portlet = "Orders");
 
 		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Open");
@@ -492,9 +473,8 @@ definition {
 			productSKU = "SPEED93015",
 			productUnitPrice = "50.00");
 
-		ApplicationsMenu.gotoPortlet(
-			category = "Commerce",
-			panel = "Control Panel",
+		CommerceNavigator.gotoPortlet(
+			category = "Order Management",
 			portlet = "Orders");
 
 		CommerceNavigator.gotoCommercePortletNavItem(navItem = "Pending");

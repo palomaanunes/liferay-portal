@@ -53,6 +53,10 @@ public final class DDMFormEvaluatorEvaluateRequest {
 		return _userId;
 	}
 
+	public boolean isEditingFieldValue() {
+		return _editingFieldValue;
+	}
+
 	public static class Builder {
 
 		public static Builder newBuilder(
@@ -73,6 +77,13 @@ public final class DDMFormEvaluatorEvaluateRequest {
 
 		public Builder withDDMFormLayout(DDMFormLayout ddmFormLayout) {
 			_ddmFormEvaluatorEvaluateRequest._ddmFormLayout = ddmFormLayout;
+
+			return this;
+		}
+
+		public Builder withEditingFieldValue(boolean editingFieldValue) {
+			_ddmFormEvaluatorEvaluateRequest._editingFieldValue =
+				editingFieldValue;
 
 			return this;
 		}
@@ -110,6 +121,7 @@ public final class DDMFormEvaluatorEvaluateRequest {
 	private DDMForm _ddmForm;
 	private DDMFormLayout _ddmFormLayout;
 	private DDMFormValues _ddmFormValues;
+	private boolean _editingFieldValue;
 	private long _groupId;
 	private Locale _locale;
 	private long _userId;

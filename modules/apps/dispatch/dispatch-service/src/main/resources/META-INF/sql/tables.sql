@@ -24,8 +24,11 @@ create table DispatchTrigger (
 	modifiedDate DATE null,
 	active_ BOOLEAN,
 	cronExpression VARCHAR(75) null,
+	endDate DATE null,
 	name VARCHAR(75) null,
+	overlapAllowed BOOLEAN,
+	startDate DATE null,
 	system_ BOOLEAN,
-	type_ VARCHAR(75) null,
-	typeSettings TEXT null
+	taskSettings TEXT null,
+	taskType VARCHAR(75) null
 );

@@ -14,9 +14,9 @@
 
 package com.liferay.change.tracking.web.internal.portlet.action;
 
-import com.liferay.change.tracking.constants.CTPortletKeys;
 import com.liferay.change.tracking.model.CTCollection;
 import com.liferay.change.tracking.service.CTCollectionLocalService;
+import com.liferay.change.tracking.web.internal.constants.CTPortletKeys;
 import com.liferay.change.tracking.web.internal.constants.CTWebKeys;
 import com.liferay.change.tracking.web.internal.display.context.SchedulePublicationDisplayContext;
 import com.liferay.change.tracking.web.internal.scheduler.PublishScheduler;
@@ -42,8 +42,8 @@ import org.osgi.service.component.annotations.Reference;
 @Component(
 	immediate = true,
 	property = {
-		"javax.portlet.name=" + CTPortletKeys.CHANGE_LISTS,
-		"mvc.command.name=/change_lists/schedule_publication"
+		"javax.portlet.name=" + CTPortletKeys.PUBLICATIONS,
+		"mvc.command.name=/publications/schedule_publication"
 	},
 	service = MVCRenderCommand.class
 )
@@ -80,7 +80,7 @@ public class SchedulePublicationMVCRenderCommand implements MVCRenderCommand {
 				CTWebKeys.SCHEDULE_PUBLICATION_DISPLAY_CONTEXT,
 				schedulePublicationDisplayContext);
 
-			return "/change_lists/schedule_publication.jsp";
+			return "/publications/schedule_publication.jsp";
 		}
 		catch (PortalException portalException) {
 			throw new PortletException(portalException);

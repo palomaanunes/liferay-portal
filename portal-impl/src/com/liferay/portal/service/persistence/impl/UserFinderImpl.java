@@ -157,6 +157,10 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 	public static final String JOIN_BY_SOCIAL_RELATION_TYPE =
 		UserFinder.class.getName() + ".joinBySocialRelationType";
 
+	/**
+	 * @deprecated As of Athanasius (7.3.x), with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public Map<Long, Integer> countByGroups(
 		long companyId, int status, long[] groupIds) {
@@ -1287,6 +1291,13 @@ public class UserFinderImpl extends UserFinderBaseImpl implements UserFinder {
 				params1.remove("socialRelationType");
 
 				params2.remove("usersGroups");
+
+				params3 = new LinkedHashMap<>(params1);
+
+				params3.remove("socialRelationType");
+				params3.remove("usersGroups");
+
+				params3.put("groupsUserGroups", groupIds);
 			}
 		}
 

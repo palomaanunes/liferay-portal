@@ -23,6 +23,8 @@ import java.io.File;
 
 import java.net.URI;
 
+import java.nio.file.Files;
+
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Consumer;
@@ -30,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
@@ -174,7 +177,33 @@ public class ProjectTemplatesServiceBuilderTest
 	}
 
 	@Test
+	public void testBuildTemplateServiceBuilderWorkspaceRelativePath()
+		throws Exception {
+
+		String liferayVersion = getDefaultLiferayVersion();
+		String name = "sample";
+
+		File gradleWorkspaceDir = buildWorkspace(
+			temporaryFolder, "gradle", "gradleWS", liferayVersion,
+			mavenExecutor);
+
+		File gradlePropertiesFile = new File(
+			gradleWorkspaceDir + "gradle.properties");
+
+		Files.deleteIfExists(gradlePropertiesFile.toPath());
+
+		buildTemplateWithGradle(
+			gradleWorkspaceDir, "service-builder", name, "--liferay-version",
+			liferayVersion);
+
+		testContains(
+			gradleWorkspaceDir, name + "/" + name + "-service/build.gradle",
+			"project(\":" + name + ":" + name + "-api");
+	}
+
+	@Test
 	public void testCompareServiceBuilderPluginVersions() throws Exception {
+		Assume.assumeTrue(isBuildProjects());
 		String liferayVersion = getDefaultLiferayVersion();
 		String name = "sample";
 		String packageName = "com.test.sample";

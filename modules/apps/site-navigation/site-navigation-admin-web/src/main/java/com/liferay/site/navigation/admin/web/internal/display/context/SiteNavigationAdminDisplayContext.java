@@ -254,7 +254,22 @@ public class SiteNavigationAdminDisplayContext {
 
 	public Map<String, Object> getSiteNavigationContext() throws Exception {
 		return HashMapBuilder.<String, Object>put(
-			"addFragmentEntryLinkCommentURL",
+			"addSiteNavigationMenuItemOptions",
+			getAddSiteNavigationMenuItemDropdownItems()
+		).put(
+			"deleteSiteNavigationMenuItemURL",
+			() -> {
+				PortletURL actionURL =
+					_liferayPortletResponse.createActionURL();
+
+				actionURL.setParameter(
+					ActionRequest.ACTION_NAME,
+					"/navigation_menu/delete_site_navigation_menu_item");
+
+				return actionURL.toString();
+			}
+		).put(
+			"editSiteNavigationMenuItemParentURL",
 			() -> {
 				PortletURL actionURL =
 					_liferayPortletResponse.createActionURL();
@@ -269,9 +284,6 @@ public class SiteNavigationAdminDisplayContext {
 
 				return actionURL.toString();
 			}
-		).put(
-			"addSiteNavigationMenuItemOptions",
-			getAddSiteNavigationMenuItemDropdownItems()
 		).put(
 			"editSiteNavigationMenuItemURL",
 			() -> {
@@ -453,6 +465,9 @@ public class SiteNavigationAdminDisplayContext {
 					"children",
 					_getSiteNavigationMenuItemsJSONArray(
 						siteNavigationMenuItemId)
+				).put(
+					"parentSiteNavigationMenuItemId",
+					parentSiteNavigationMenuItemId
 				).put(
 					"siteNavigationMenuItemId", siteNavigationMenuItemId
 				).put(

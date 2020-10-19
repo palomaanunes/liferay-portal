@@ -97,7 +97,7 @@ DepotAdminManagementToolbarDisplayContext depotAdminManagementToolbarDisplayCont
 							%>
 
 							<liferay-ui:search-container-column-text>
-								<clay:vertical-card
+								<clay:vertical-card-v2
 									verticalCard="<%= depotAdminDisplayContext.getDepotEntryVerticalCard(depotEntry) %>"
 								/>
 							</liferay-ui:search-container-column-text>
@@ -110,6 +110,12 @@ DepotAdminManagementToolbarDisplayContext depotAdminManagementToolbarDisplayCont
 							>
 								<aui:a href="<%= depotAdminDisplayContext.getViewDepotURL(depotEntry) %>" label="<%= HtmlUtil.escape(depotEntryGroup.getDescriptiveName(locale)) %>" localizeLabel="<%= false %>" />
 							</liferay-ui:search-container-column-text>
+
+							<liferay-ui:search-container-column-text
+								cssClass="table-cell-expand table-cell-minw-200"
+								name="num-of-connections"
+								value="<%= String.valueOf(depotAdminDisplayContext.getDepotEntryConnectedGroupsCount(depotEntry)) %>"
+							/>
 
 							<liferay-ui:search-container-column-text>
 								<clay:dropdown-actions
